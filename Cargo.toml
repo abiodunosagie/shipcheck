@@ -1,0 +1,25 @@
+[package]
+name = "shipcheck"
+version = "0.1.0"
+edition = "2021"
+description = "Audit a website before launch: broken links, link previews, image alt text and size, headings, mixed content, robots and sitemap."
+license = "MIT"
+authors = ["Abiodun Osagie"]
+repository = "https://github.com/abiodunosagie/shipcheck"
+readme = "README.md"
+keywords = ["seo", "links", "audit", "cli", "website"]
+categories = ["command-line-utilities", "web-programming"]
+
+[dependencies]
+clap = { version = "4.6", features = ["derive"] }
+futures = "0.3"
+reqwest = { version = "0.13", default-features = false, features = ["rustls", "http2", "gzip", "brotli"] }
+scraper = "0.27"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time", "sync", "net", "io-util", "fs"] }
+url = "2.5"
+
+[profile.release]
+lto = true
+codegen-units = 1
