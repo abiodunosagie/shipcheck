@@ -2,6 +2,7 @@
 name = "shipcheck"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.88"
 description = "Audit a website before launch: broken links, link previews, image alt text and size, headings, mixed content, robots and sitemap."
 license = "MIT"
 authors = ["Abiodun Osagie"]

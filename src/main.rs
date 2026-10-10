@@ -28,20 +28,20 @@ enum FailOn {
 struct Args {
     /// A URL (https://example.com) or a local folder of built HTML (./out, ./dist).
     target: String,
-    /// Stop crawling after this many pages.
-    #[arg(long, default_value_t = 200)]
+    /// Stop crawling after this many pages (at least 1).
+    #[arg(long, default_value_t = crawl::DEFAULT_MAX_PAGES)]
     max_pages: usize,
-    /// How many links to check at once.
-    #[arg(long, default_value_t = 8)]
+    /// How many links to check at once (1 to 64).
+    #[arg(long, default_value_t = crawl::DEFAULT_CONCURRENCY)]
     concurrency: usize,
-    /// Seconds to wait for each request.
-    #[arg(long, default_value_t = 15)]
+    /// Seconds to wait for each request (1 to 120).
+    #[arg(long, default_value_t = crawl::DEFAULT_TIMEOUT_SECS)]
     timeout: u64,
     /// Only check links within the site.
     #[arg(long)]
     no_external: bool,
     /// Warn about images larger than this many kilobytes.
-    #[arg(long, default_value_t = 300)]
+    #[arg(long, default_value_t = crawl::DEFAULT_MAX_IMAGE_KB)]
     max_image_kb: u64,
     /// Print the report as JSON instead of text.
     #[arg(long)]

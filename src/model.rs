@@ -4,7 +4,7 @@ use serde::Serialize;
 use std::fmt;
 
 /// How bad an issue is. Errors fail the run by default; warnings only with `--fail-on warning`.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Severity {
     Warning,
@@ -32,21 +32,24 @@ pub struct Issue {
 }
 
 impl Issue {
-    pub fn error(page: &str, check: &'static str, message: impl Into<String>) -> Self {
+    pub fn new(
+        page: &str,
+        check: &'static str,
+        severity: Severity,
+        message: impl Into<String>,
+    ) -> Self {
         Self {
             page: page.to_owned(),
             check,
-            severity: Severity::Error,
+            severity,
             message: message.into(),
         }
     }
+    pub fn error(page: &str, check: &'static str, message: impl Into<String>) -> Self {
+        Self::new(page, check, Severity::Error, message)
+    }
     pub fn warning(page: &str, check: &'static str, message: impl Into<String>) -> Self {
-        Self {
-            page: page.to_owned(),
-            check,
-            severity: Severity::Warning,
-            message: message.into(),
-        }
+        Self::new(page, check, Severity::Warning, message)
     }
 }
 

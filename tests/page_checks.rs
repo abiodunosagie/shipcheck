@@ -136,3 +136,27 @@ fn targets_are_resolved_deduplicated_and_skip_unfetchable_links() {
     assert!(urls.iter().all(|(u, _)| u.starts_with("https://")));
     assert!(a.has_icon);
 }
+
+#[test]
+fn relative_urls_follow_the_base_tag() {
+    let html = COMPLETE.replace("</head>", r#"<base href="/docs/"></head>"#);
+    let urls: Vec<String> = analyze(&page(), &html)
+        .targets
+        .iter()
+        .map(|t| t.url.to_string())
+        .collect();
+    assert!(
+        urls.contains(&"https://example.com/docs/a.png".to_owned()),
+        "{urls:?}"
+    );
+}
+
+#[test]
+fn tags_match_in_any_case_and_open_graph_also_counts_under_name() {
+    let html = COMPLETE
+        .replace(r#"name="description""#, r#"name="Description""#)
+        .replace(r#"rel="canonical""#, r#"rel="Canonical""#)
+        .replace(r#"property="og:image""#, r#"name="og:image""#)
+        .replace(r#"property="og:title""#, r#"property="OG:Title""#);
+    assert_eq!(checks(&html), vec![]);
+}
