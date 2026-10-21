@@ -69,7 +69,10 @@ async fn main() {
         max_image_bytes: args.max_image_kb.saturating_mul(1024),
     };
     if !args.json {
-        eprintln!("shipcheck: checking {start}");
+        eprintln!(
+            "{}",
+            report::opening(start.as_str(), use_color(std::io::stderr().is_terminal()))
+        );
     }
     let report = match crawl::run(start, &cfg).await {
         Ok(r) => r,
@@ -81,7 +84,10 @@ async fn main() {
     if args.json {
         println!("{}", report::json(&report));
     } else {
-        print!("{}", report::text(&report, std::io::stdout().is_terminal()));
+        print!(
+            "{}",
+            report::text(&report, use_color(std::io::stdout().is_terminal()))
+        );
     }
     let failed = match args.fail_on {
         FailOn::Error => report.count(Severity::Error) > 0,
@@ -89,6 +95,11 @@ async fn main() {
         FailOn::Never => false,
     };
     std::process::exit(i32::from(failed));
+}
+
+/// Colour only on a terminal, and never when NO_COLOR is set (https://no-color.org).
+fn use_color(is_terminal: bool) -> bool {
+    is_terminal && std::env::var_os("NO_COLOR").is_none_or(|v| v.is_empty())
 }
 
 /// A folder is served locally; anything else must parse as an http(s) URL.

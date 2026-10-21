@@ -3,6 +3,19 @@
 use crate::model::{Report, Severity};
 use std::fmt::Write;
 
+/// The opening line on stderr. In a terminal it carries the shipcheck mark, a prompt and a tick
+/// (`>✓`) in the brand amber; piped or redirected, it stays plain text.
+pub fn opening(start: &str, color: bool) -> String {
+    if color {
+        format!(
+            "\x1b[1;38;5;214m>\u{2713}\x1b[0m \x1b[1mshipcheck\x1b[0m checking {}",
+            printable(start)
+        )
+    } else {
+        format!("shipcheck: checking {}", printable(start))
+    }
+}
+
 /// Groups issues by page, errors first, with a one-line summary at the end.
 pub fn text(report: &Report, color: bool) -> String {
     let (red, yellow, bold, dim, reset) = if color {
@@ -52,4 +65,32 @@ fn printable(s: &str) -> String {
 /// The report as pretty-printed JSON; serde escapes control characters.
 pub fn json(report: &Report) -> String {
     serde_json::to_string_pretty(report).expect("report serializes")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::opening;
+
+    #[test]
+    fn opening_line_is_plain_when_piped() {
+        assert_eq!(
+            opening("https://example.com/", false),
+            "shipcheck: checking https://example.com/"
+        );
+    }
+
+    #[test]
+    fn opening_line_carries_the_mark_in_a_terminal() {
+        let line = opening("https://example.com/", true);
+        assert!(
+            line.contains(">\u{2713}")
+                && line.contains("shipcheck")
+                && line.ends_with("https://example.com/")
+        );
+    }
+
+    #[test]
+    fn opening_line_strips_control_characters_from_the_target() {
+        assert!(!opening("https://example.com/\x1b[2J", true).contains("\x1b[2J"));
+    }
 }

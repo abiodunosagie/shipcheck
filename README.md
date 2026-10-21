@@ -1,4 +1,4 @@
-# shipcheck
+<img src="brand/banner.svg" alt="shipcheck: audit a website before launch" width="100%">
 
 [![CI](https://github.com/abiodunosagie/shipcheck/actions/workflows/ci.yml/badge.svg)](https://github.com/abiodunosagie/shipcheck/actions/workflows/ci.yml)
 
@@ -25,7 +25,7 @@ Run against the broken test site in `tests/fixtures/bad` (the local server picks
 
 ```
 $ shipcheck tests/fixtures/bad --no-external
-shipcheck: checking http://127.0.0.1:8080/
+>✓ shipcheck checking http://127.0.0.1:8080/
 
 http://127.0.0.1:8080/
   error   broken-link      link returns HTTP 404: http://127.0.0.1:8080/nowhere
@@ -162,13 +162,14 @@ src/
   crawl.rs    crawl, concurrent link checking, site-wide files
   page.rs     per-page analysis: head tags, headings, images, links and resources
   serve.rs    local static file server for build folders
-  report.rs   text and JSON output
+  report.rs   text and JSON output, the opening line with the >✓ mark
   model.rs    issues, severities and the report
 tests/
   page_checks.rs   page analysis
   site.rs          end-to-end crawls and the local server
   cli.rs           the binary: exit codes and output
   fixtures/        a complete site and a broken site
+brand/            logo masters, banner and guidelines (python3 brand/generate.py)
 ```
 
 ## License
